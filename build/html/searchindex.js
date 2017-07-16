@@ -1,0 +1,1 @@
+Search.setIndex({envversion:46,filenames:["Framework","index"],objects:{},objnames:{},objtypes:{},terms:{content:1,index:1,modul:1,page:1,search:1},titles:["\u57fa\u672c\u7684\u5de5\u4f5c\u6d41","Welcome to VimSkill&#8217;s documentation!"],titleterms:{"\u57fa\u672c\u7684\u5de5\u4f5c\u6d41":0,document:1,indic:1,tabl:1,vimskil:1,welcom:1}})
