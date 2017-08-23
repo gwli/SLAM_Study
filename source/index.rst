@@ -12,7 +12,8 @@ Contents:
    :maxdepth: 3
    
    Framework.rst
-
+   sensor.rst
+   SLAMOnJetsonTX2.rst
 
 
 Indices and tables
