@@ -75,10 +75,11 @@ DL的做法，可以直接得到基于语义的特征点。
 直接法:
 
 #. 保留特征点，但不计算描述子。直接发使用光流跟踪，并且直接计算特征点在一时刻的位置，光流法会根据图像像素灰度信息来计算机运动。对光照要求严格。
+
 .. image:: SFM_overview.png
 .. image:: outline.png
 .. image:: overview.png
-.. image:: nvx_architecture.png 
+.. image:: nvx_arch_diagram.png 
 
 nlp 非线性优化
 --------------
