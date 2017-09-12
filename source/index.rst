@@ -11,6 +11,10 @@ Contents:
 .. toctree::
    :maxdepth: 3
    
+   stage_0.rst
+   stage_1.rst
+   stage_2.rst
+   stage_3.rst
    Framework.rst
    sensor.rst
    SLAMOnJetsonTX2.rst
