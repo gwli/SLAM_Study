@@ -13,8 +13,8 @@ JetPack 的目录结构
    
 
 
-如何快速刷机与定制一个linux
-============================
+如何快速定制target的刷机Image
+=============================
 
 
 #. 从官网下载最新的 JetPack_ 最新版本为3.1.
@@ -23,6 +23,7 @@ JetPack 的目录结构
    .. note::
       
       进入recover 模式， 组合键顺序:   :kbd:`Rec` -> :kbd:`Rec+Reset` -> :kbd:`Rec` 
+
 #.  在device 上安装各种额外的包。你可以用VNC 或者ssh 去连接device.
     
     .. code-block:: bash
