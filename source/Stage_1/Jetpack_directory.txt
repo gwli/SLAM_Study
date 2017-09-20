@@ -1,0 +1,102 @@
+﻿  JetPack tree -L 3
+.
+├── 64_TX2
+│   ├── cuda-l4t
+│   │   └── cuda-l4t.sh
+│   ├── cudnn
+│   │   ├── libcudnn6_6.0.21-1+cuda8.0_arm64.deb
+│   │   ├── libcudnn6-dev_6.0.21-1+cuda8.0_arm64.deb
+│   │   └── libcudnn6-doc_6.0.21-1+cuda8.0_arm64.deb
+│   ├── Linux_for_Tegra_tx2
+│   │   ├── apply_binaries.sh
+│   │   ├── bootloader
+│   │   ├── cmd.sh
+│   │   ├── flash.sh
+│   │   ├── jetson-tx2.conf -> p2771-0000-devkit.conf
+│   │   ├── kernel
+│   │   ├── new_dir
+│   │   ├── nv_tegra
+│   │   ├── p2771-0000.conf.common
+│   │   ├── p2771-0000-devkit.conf
+│   │   ├── p2771-0000-dsi-hdmi-dp.conf
+│   │   ├── rootfs
+│   │   ├── source_sync.sh
+│   │   └── TX2_flash_package.tgz
+│   └── tegra_multimedia_api
+│       ├── argus
+│       ├── data
+│       ├── include
+│       ├── LEGAL
+│       ├── LICENSE
+│       ├── Makefile
+│       ├── README
+│       ├── samples
+│       └── tools
+├── _installer
+│   ├── Chooser
+│   ├── configure_host
+│   ├── cuda-l4t.sh
+│   ├── exit.code
+│   ├── flash_os
+│   ├── InstallUtil
+│   ├── JetPack.log
+│   ├── Launcher
+│   ├── Launcher.log
+│   ├── local.cfg
+│   ├── local.db
+│   ├── local.ini
+│   ├── logs
+│   │   └── 64_TX2
+│   ├── nv_info_broker
+│   ├── ocv.sh
+│   ├── PageAction
+│   ├── Poller
+│   ├── rc.local
+│   ├── remove_unsupported_cuda_samples.sh
+│   ├── report_ip_to_host.sh
+│   ├── run_command
+│   ├── run_gameworks_sample.sh
+│   ├── selected_comps.txt
+│   ├── start_up.sh
+│   ├── sudo_daemon
+│   └── tmp
+│       ├── jetpackfifo
+│       ├── jetpackfifo_req
+│       └── log
+├── jetpack_download
+│   ├── 2017_06_14_0412-22311683-NVIDIA_Tegra_Graphics_Debugger_2.4.17165.0412_Release_External_tgd-l4t_linux-l4t.run
+│   ├── cuda-repo-l4t-8-0-local_8.0.84-1_arm64.deb
+│   ├── cuda-repo-ubuntu1404-8-0-local_8.0.84-1_amd64.deb
+│   ├── host-x64-linux-public-3.8.450-a527a18.tar.gz
+│   ├── jetpack_docs.zip
+│   ├── libcudnn6_6.0.21-1+cuda8.0_arm64.deb
+│   ├── libcudnn6-dev_6.0.21-1+cuda8.0_arm64.deb
+│   ├── libcudnn6-doc_6.0.21-1+cuda8.0_arm64.deb
+│   ├── libopencv4tegra-repo_2.4.13-17-g5317135_amd64_ubuntu-14.04.deb
+│   ├── libopencv4tegra-repo_2.4.13-17-g5317135_arm64_l4t-r26.deb
+│   ├── libvisionworks-repo_1.6.0.193n_amd64_ubuntu-14.04.deb
+│   ├── libvisionworks-repo_1.6.0.233n_arm64_l4t-r26.deb
+│   ├── libvisionworks-sfm-repo_0.90.1_amd64_ubuntu-14.04.deb
+│   ├── libvisionworks-sfm-repo_0.90.1_arm64_l4t-r26.deb
+│   ├── libvisionworks-tracking-repo_0.88.0_amd64_ubuntu-14.04.deb
+│   ├── libvisionworks-tracking-repo_0.88.0_arm64_l4t-r26.deb
+│   ├── nv-gie-repo-ubuntu1604-ga-cuda8.0-trt2.1-20170614_1-1_arm64.deb
+│   ├── NVIDIA_Tegra_Linux_Driver_Package.tar
+│   ├── NVIDIA_VisionWorks_1.6_Docs.zip
+│   ├── Tegra186_Linux_R28.1.0_aarch64.tbz2
+│   ├── Tegra_Linux_Driver_Package_Release_Notes_R28.1.pdf
+│   ├── Tegra_Linux_Sample-Root-Filesystem_R28.1.0_aarch64.tbz2
+│   └── Tegra_Multimedia_API_R28.1.0_aarch64.tbz2
+├── JetPack-L4T-3.1-linux-x64.run
+├── JetPack_Uninstaller
+├── manifest.json
+├── repository.json
+├── tmp
+│   ├── com.nvidia.cuda.host_tx2_cuda.png
+│   ├── com.nvidia.l4t.driver4os_64_tx2_nvidia.png
+│   ├── com.nvidia.l4t.flash_64_tx2_nvidia.png
+│   └── com.nvidia.nvtools.battle_tegra-graphics-debugger.png
+└── update.lock
+
+21 directories, 76 files
+➜  JetPack 

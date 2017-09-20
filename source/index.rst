@@ -3,18 +3,18 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to VimSkill's documentation!
-====================================
+Welcome to SLAM_study 's documentation!
+========================================
 
 Contents:
 
 .. toctree::
    :maxdepth: 3
    
-   stage_0.rst
-   stage_1.rst
-   stage_2.rst
-   stage_3.rst
+   Stage_0.rst
+   Stage_1.rst
+   Stage_2.rst
+   Stage_3.rst
    Framework.rst
    sensor.rst
    SLAMOnJetsonTX2.rst
