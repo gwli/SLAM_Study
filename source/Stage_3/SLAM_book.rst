@@ -74,3 +74,21 @@ Ceres
 
 g2o
 ----
+
+
+ch7 
+
+ch9
+===
+
+工程会报错 opencv/viz.hpp没有
+-----------------------------
+
+
+.. code-block:: bash
+
+   dpkg -L  opencv //可以查看这个库到底安装了哪些文件
+   apt install -y libvtk5-dev
+   cmake -DWITH_VTK=On <path to your opence srouce> 
+   make 
+   make install  //update the include path
