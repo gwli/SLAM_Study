@@ -93,7 +93,8 @@ ORB-SLAM
 #. MapPoints->KeyFrames->CoovisibilityGraph->SpanningTree 具体的流程可以参考 SLAM、orb-slam7.1 简单重构泡泡.pptx
 #. 并且采用了面向对象思想封装,把获取的图像数据装成帧。后续处理都是针对帧处理。
 
-   .. code-block:: cpp
+   .. code-block:: c 
+
       Frame {
          Image-> 存储图像数据(输入)
          Camera-> 存储相机的内参信息(输入)
