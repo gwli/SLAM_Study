@@ -3,6 +3,21 @@ Jetson-TX2
 
 Jeton-TX2 的开发包，包含了 tensorRT,cuda,cudnn,opencv,以及visionworks 以及Multimedia API等等。 以及相关的开发工具，CPU的proiler, NSight Eclipse, Tegra Graphic profiler 等等。并且本身是全版的ubuntu 16.04. 特别适合做二次开发。
 
+
+
+如何从离线安装  
+==============
+
+#. 把上次安装目目录下的 :file:`/Jetpack/jetpack_download` 保存一下
+#. 再一次安装的指定 repo
+   
+   .. code-block:: bash
+      
+      comp_repo_path=file:///home/ubuntu/Jetpack/jetpack_download/jetpack.json ./JetPack-L4T-XX.run
+
+      #slient update
+      Launcher_slient_mode=install  development_platform=jetson-tx2  ./JetPack-L4T-XXX.run
+
 JetPack 的目录结构
 ==================
 
@@ -10,8 +25,6 @@ JetPack 的目录结构
    :language: bash
    :emphasize-lines: 12,22 
    
-   
-
 
 如何快速定制target的刷机Image
 =============================

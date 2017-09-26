@@ -66,7 +66,7 @@ code: github.com/tum-vision/lsd_slam
 生成两个双目frame的视频流。如何反向呢。
 性能:
 
-slamcn.org 用户名victor 密码是victor@slamcn 邮箱是gwli@outlook.com
+..  slamcn.org 用户名victor 密码是victor@slamcn 邮箱是gwli@outlook.com
 
 SVO
 ---
