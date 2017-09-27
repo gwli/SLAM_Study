@@ -5,7 +5,7 @@ SLAM 14讲
 ====
 
 #. 用Nsight Tegra 来分析每一个例子瓶颈
-#. 用LLVM 生成callgraph
+#. 用LLVM 生成callgraph， 如何查看其编译的参数
 #. 找出各种优化方法
 #. 并且写出验证代码
 #. 写出自动优化的框架
