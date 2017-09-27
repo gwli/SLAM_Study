@@ -18,7 +18,7 @@ ch3 visualizeGeometry
 .. image::  /Stage_3/SLAM_book/ch2_visualizeGeomtry.png
 
 用了一个 Pangolin的GUI库，
-.. 
+
 ch4 使用李群与李代数
 ====================
 
