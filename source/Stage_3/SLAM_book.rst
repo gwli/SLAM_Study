@@ -1,7 +1,24 @@
 SLAM 14讲
 *********
 
+目标
+====
 
+#. 用Nsight Tegra 来分析每一个例子瓶颈
+#. 用LLVM 生成callgraph
+#. 找出各种优化方法
+#. 并且写出验证代码
+#. 写出自动优化的框架
+#. 生成各种report 
+#. 实现debug过程的可视化,可以通过扩展gdb,以及底层的api为一些动态的数据。
+
+ch3 visualizeGeometry
+======================
+
+.. image::  /Stage_3/SLAM_book/ch2_visualizeGeomtry.png
+
+用了一个 Pangolin的GUI库，
+.. 
 ch4 使用李群与李代数
 ====================
 
@@ -72,11 +89,98 @@ ch6 非线优化
 Ceres 
 -----
 
+用法用核心就是 定义loss函数。 然后用把数据扔给solver就行了。
+
+看一个hello world就明白了。
+
+.. math::
+
+   Loss = min \sum | y^1 -f(x)|^2
+
+
+.. code-block:: cpp
+
+   struct CostFunctor {
+   template <typename T>
+   bool operator()(const T* const x, T* residual) const {
+     residual[0] = T(10.0) - x[0];
+     return true;
+   }
+   };
+
+   int main(int argc, char** argv) {
+     google::InitGoogleLogging(argv[0]);
+   
+     // The variable to solve for with its initial value.
+     double initial_x = 5.0;
+     double x = initial_x;
+   
+     // Build the problem.
+     Problem problem;
+   
+     // Set up the only cost function (also known as residual). This uses
+     // auto-differentiation to obtain the derivative (jacobian).
+     CostFunction* cost_function =
+         new AutoDiffCostFunction<CostFunctor, 1, 1>(new CostFunctor);
+     problem.AddResidualBlock(cost_function, NULL, &x);
+   
+     // Run the solver!
+     Solver::Options options;
+     options.linear_solver_type = ceres::DENSE_QR;
+     options.minimizer_progress_to_stdout = true;
+     Solver::Summary summary;
+     Solve(options, &problem, &summary);
+   
+     std::cout << summary.BriefReport() << "\n";
+     std::cout << "x : " << initial_x
+               << " -> " << x << "\n";
+     return 0;
+   }
+
 g2o
 ----
 
+图优化的目标就是把用优化问题变成图优。
 
-ch7 
+优化问题 :math:` \min\limits_{x} F(x)` 三个基本因素:
+
+#. 目标函数
+#. 优化变量
+#. 优化约束
+
+
+最基本的图优化就是用图模型来表达一个非线性最小二乘的优化问题。
+
+图优化的原理
+在图中，以顶点表示优化变量，以边表示观测方程或者边为误差项。 我们目标最短路径
+或者全体权值最小。
+
+在图中，我们去掉孤立顶点或化先优化边数较多的顶点。
+
+.. math:: 
+   
+   \min\limits_{x} \sum\limits_{k = 1}^n {{e_k}{{\left( {{x_k},{z_k}} \right)}^T}{\Omega _k}{e_k}\left( {{x_k},{z_k}} \right)} 
+
+
+
+与ceres 类似，这个是一个通用优化框架，你需要继承或定义问题本身的基本模型就可以了。
+例如g2o就是要定义顶点类与边类的如何更新与计算。 把一堆的顶点与边扔进去。
+
+ch7 VO
+======
+
+3D to 3D 的位置估计
+--------------------
+
+也就是从自己观测的3D点，来计算出自身的运动方程
+
+.. image::  /Stage_3/SLAM_book/ch7_pose_estimation_3d3d.png
+
+这个基本上都还是单线程。耗时比较除了do_lookup_x之外，那就是cv::FAST函数了。
+
+
+ch8 V0
+======
 
 ch9
 ===
