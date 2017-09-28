@@ -169,6 +169,27 @@ g2o
 ch7 VO
 ======
 
+feature_exection
+----------------
+
+特征点的提取与描述子两部分组成。
+特征点的提取计算与以及有准备性。
+
+.. image:: /Stage_3/SLAM_book/ch7_feature_extraction.png
+.. image:: /Stage_3/SLAM_book/ch7_feature_extraction_ORB.png
+.. image:: /Stage_3/SLAM_book/ch7_feature_extraction_Analysis_summary.png
+.. image:: /Stage_3/SLAM_book/ch7_feature_extraction_timeline.png
+
+.. csv-table:: 
+
+   :header: "method",comments
+
+    SIFT, 
+    FAST,
+    ORB, Oriented FAST and　Rotateed BRIEF
+   
+1000 个字， ORB 15.3ms, SURF,217.3ms, SIFT 5228.7ms. 
+
 3D to 3D 的位置估计
 --------------------
 
@@ -179,8 +200,22 @@ ch7 VO
 这个基本上都还是单线程。耗时比较除了do_lookup_x之外，那就是cv::FAST函数了。
 
 
+
+
 ch8 V0
 ======
+
+LKFlow
+------
+
+.. image:: /Stage_3/SLAM_book/ch8_LK_Analysis.png
+.. image:: /Stage_3/SLAM_book/ch8_LK_timeline.png
+.. image:: /Stage_3/SLAM_book/ch8_LK.png
+
+DirectSemiDense and DirectSparse
+--------------------------------
+
+Buserror wait for debug
 
 ch9
 ===
