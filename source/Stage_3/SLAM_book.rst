@@ -231,3 +231,25 @@ ch9
    cmake -DWITH_VTK=On <path to your opence srouce> 
    make 
    make install  //update the include path
+
+
+ch10
+====
+
+g20_bundle
+==========
+
+.. image:: /Stage_3/SLAM_book/ch10_g2oBundle.png
+
+g2o BuildSystem消耗的时间比较多
+
+
+cere bundle
+===========
+
+.. image:: /Stage_3/SLAM_book/ch10_g2oBundle.png
+
+ch11
+=====
+
+build error: gtsam module
