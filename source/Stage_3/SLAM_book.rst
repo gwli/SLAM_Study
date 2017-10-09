@@ -253,3 +253,73 @@ ch11
 =====
 
 build error: gtsam module
+
+pose_graph_g2o_lie
+------------------
+
+.. figure:: /Stage_3/SLAM_book/ch11_pose_graph_g2o_lie.png
+   
+   unkown的callstack就需要进一步用的工具分析。或者添加相关的库的dbg文件来进一步解析。
+
+.. figure:: /Stage_3/SLAM_book/ch11_pose_graph_g2o_lie_timeline.png
+   cholmod_factorize 是blas库的 CHolesky分解也就是LU分解。
+
+.. figure:: /Stage_3/SLAM_book/ch11_pose_graph_g2o_lie_timeline_topdown.png
+
+
+ch12
+====
+
+字典的生成，DBoW3。 字典建立的原理，
+
+#. 从训练图像中离线抽取特征
+#. 将抽取的特征用聚类算法把描述子空间划分成K类。
+#. 将划分的每个子空间，继续利用聚类分析
+#. 直到将描述子形成一个树形结构
+
+
+.. code-block:: c
+
+   struct Node {
+      NodeId id;  //节点标号
+      WordValue  weight; // 该节点的权重，也出现的字数除以总描述子数目
+      TDescriptor descriptor; //描述符
+      WordId word_id;  //如果是叶子节点，则有词汇的id
+   }
+
+DBow#的结构，
+
+`Fast Bag of Words <https://github.com/rmsalinas/fbow>`_ 用AVX,SSE,MMX 指令来优化了一下，加载 比DBOW2快了~80倍，
+生成字典时快了 ~6.4倍。
+
+
+feature_training
+----------------
+
+.. image:: /Stage_3/SLAM_book/ch12_feature_training_Analysis_summary.png
+
+
+.. figure:: /Stage_3/SLAM_book/ch12_feature_training_timeline.png
+
+   虽然有多线程，但是并行度非常低，并且thread context的切换次数比较多。
+
+Loop_check
+----------
+
+.. image:: /Stage_3/SLAM_book/ch12_loop_check_Analysis_summary.png
+
+.. image:: /Stage_3/SLAM_book/ch12_loop_check_timeline.png
+
+ch13
+====
+
+octomap 是可以用来展示地图，https://github.com/OctoMap/octomap
+几种地图的优缺点 http://www.cnblogs.com/gaoxiang12/p/5041142.html
+
+而简单的pcd 点运地图没有法进行导房，而采用了八叉树的模式来建立地图就像游戏地图的构件过程一样。
+
+
+dense_monocular
+----------------
+
+直接计算特征点匹配计算量太大，采用极线搜索与块比匹配。
