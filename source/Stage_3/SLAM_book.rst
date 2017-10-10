@@ -325,7 +325,226 @@ Buserror wait for debug，这个是由 Trace/breakpoint Trap signal引起的，�
    Quit this debugging session? (y or n) y
 
 
-实质上采用的是 levenbergIter迭代法,遇到这种问题，就要看返回的对象是不是对，是不是因为未定状态，造成stackoverflow，从而引发的 trap的signal.
+   //gdb source code 
+   /* Analyze a prologue, looking for a recognizable stack frame
+      and frame pointer.  Scan until we encounter a store that could
+      clobber the stack frame unexpectedly, or an unknown instruction.  */
+   
+   static CORE_ADDR
+   aarch64_analyze_prologue (struct gdbarch *gdbarch,
+   			  CORE_ADDR start, CORE_ADDR limit,
+   			  struct aarch64_prologue_cache *cache)
+   {
+     enum bfd_endian byte_order_for_code = gdbarch_byte_order_for_code (gdbarch);
+     int i;
+     pv_t regs[AARCH64_X_REGISTER_COUNT];
+     struct pv_area *stack;
+     struct cleanup *back_to;
+   
+     for (i = 0; i < AARCH64_X_REGISTER_COUNT; i++)
+       regs[i] = pv_register (i, 0);
+     stack = make_pv_area (AARCH64_SP_REGNUM, gdbarch_addr_bit (gdbarch));
+     back_to = make_cleanup_free_pv_area (stack);
+   
+     for (; start < limit; start += 4)
+       {
+         uint32_t insn;
+         aarch64_inst inst;
+   
+         insn = read_memory_unsigned_integer (start, 4, byte_order_for_code);
+   
+         if (aarch64_decode_insn (insn, &inst, 1) != 0)
+   	break;
+   
+         if (inst.opcode->iclass == addsub_imm
+   	  && (inst.opcode->op == OP_ADD
+   	      || strcmp ("sub", inst.opcode->name) == 0))
+   	{
+   	  unsigned rd = inst.operands[0].reg.regno;
+   	  unsigned rn = inst.operands[1].reg.regno;
+   
+   	  gdb_assert (aarch64_num_of_operands (inst.opcode) == 3);
+   	  gdb_assert (inst.operands[0].type == AARCH64_OPND_Rd_SP);
+   	  gdb_assert (inst.operands[1].type == AARCH64_OPND_Rn_SP);
+   	  gdb_assert (inst.operands[2].type == AARCH64_OPND_AIMM);
+   
+   	  if (inst.opcode->op == OP_ADD)
+   	    {
+   	      regs[rd] = pv_add_constant (regs[rn],
+   					  inst.operands[2].imm.value);
+   	    }
+   	  else
+   	    {
+   	      regs[rd] = pv_add_constant (regs[rn],
+   					  -inst.operands[2].imm.value);
+   	    }
+   	}
+         else if (inst.opcode->iclass == pcreladdr
+   	       && inst.operands[1].type == AARCH64_OPND_ADDR_ADRP)
+   	{
+   	  gdb_assert (aarch64_num_of_operands (inst.opcode) == 2);
+   	  gdb_assert (inst.operands[0].type == AARCH64_OPND_Rd);
+   
+   	  regs[inst.operands[0].reg.regno] = pv_unknown ();
+   	}
+         else if (inst.opcode->iclass == branch_imm)
+   	{
+   	  /* Stop analysis on branch.  */
+   	  break;
+   	}
+         else if (inst.opcode->iclass == condbranch)
+   	{
+   	  /* Stop analysis on branch.  */
+   	  break;
+   	}
+         else if (inst.opcode->iclass == branch_reg)
+   	{
+   	  /* Stop analysis on branch.  */
+   	  break;
+   	}
+         else if (inst.opcode->iclass == compbranch)
+   	{
+   	  /* Stop analysis on branch.  */
+   	  break;
+   	}
+         else if (inst.opcode->op == OP_MOVZ)
+   	{
+   	  gdb_assert (inst.operands[0].type == AARCH64_OPND_Rd);
+   	  regs[inst.operands[0].reg.regno] = pv_unknown ();
+   	}
+         else if (inst.opcode->iclass == log_shift
+   	       && strcmp (inst.opcode->name, "orr") == 0)
+   	{
+   	  unsigned rd = inst.operands[0].reg.regno;
+   	  unsigned rn = inst.operands[1].reg.regno;
+   	  unsigned rm = inst.operands[2].reg.regno;
+   
+   	  gdb_assert (inst.operands[0].type == AARCH64_OPND_Rd);
+   	  gdb_assert (inst.operands[1].type == AARCH64_OPND_Rn);
+   	  gdb_assert (inst.operands[2].type == AARCH64_OPND_Rm_SFT);
+   
+   	  if (inst.operands[2].shifter.amount == 0
+   	      && rn == AARCH64_SP_REGNUM)
+   	    regs[rd] = regs[rm];
+   	  else
+   	    {
+   	      if (aarch64_debug)
+   		{
+   		  debug_printf ("aarch64: prologue analysis gave up "
+   				"addr=0x%s opcode=0x%x (orr x register)\n",
+   				core_addr_to_string_nz (start), insn);
+   		}
+   	      break;
+   	    }
+   	}
+         else if (inst.opcode->op == OP_STUR)
+   	{
+   	  unsigned rt = inst.operands[0].reg.regno;
+   	  unsigned rn = inst.operands[1].addr.base_regno;
+   	  int is64
+   	    = (aarch64_get_qualifier_esize (inst.operands[0].qualifier) == 8);
+   
+   	  gdb_assert (aarch64_num_of_operands (inst.opcode) == 2);
+   	  gdb_assert (inst.operands[0].type == AARCH64_OPND_Rt);
+   	  gdb_assert (inst.operands[1].type == AARCH64_OPND_ADDR_SIMM9);
+   	  gdb_assert (!inst.operands[1].addr.offset.is_reg);
+   
+   	  pv_area_store (stack, pv_add_constant (regs[rn],
+   						 inst.operands[1].addr.offset.imm),
+   			 is64 ? 8 : 4, regs[rt]);
+   	}
+         else if ((inst.opcode->iclass == ldstpair_off
+   		|| inst.opcode->iclass == ldstpair_indexed)
+   	       && inst.operands[2].addr.preind
+   	       && strcmp ("stp", inst.opcode->name) == 0)
+   	{
+   	  unsigned rt1 = inst.operands[0].reg.regno;
+   	  unsigned rt2 = inst.operands[1].reg.regno;
+   	  unsigned rn = inst.operands[2].addr.base_regno;
+   	  int32_t imm = inst.operands[2].addr.offset.imm;
+   
+   	  gdb_assert (inst.operands[0].type == AARCH64_OPND_Rt);
+   	  gdb_assert (inst.operands[1].type == AARCH64_OPND_Rt2);
+   	  gdb_assert (inst.operands[2].type == AARCH64_OPND_ADDR_SIMM7);
+   	  gdb_assert (!inst.operands[2].addr.offset.is_reg);
+   
+   	  /* If recording this store would invalidate the store area
+   	     (perhaps because rn is not known) then we should abandon
+   	     further prologue analysis.  */
+   	  if (pv_area_store_would_trash (stack,
+   					 pv_add_constant (regs[rn], imm)))
+   	    break;
+   
+   	  if (pv_area_store_would_trash (stack,
+   					 pv_add_constant (regs[rn], imm + 8)))
+   	    break;
+   
+   	  pv_area_store (stack, pv_add_constant (regs[rn], imm), 8,
+   			 regs[rt1]);
+   	  pv_area_store (stack, pv_add_constant (regs[rn], imm + 8), 8,
+   			 regs[rt2]);
+   
+   	  if (inst.operands[2].addr.writeback)
+   	    regs[rn] = pv_add_constant (regs[rn], imm);
+   
+   	}
+         else if (inst.opcode->iclass == testbranch)
+   	{
+   	  /* Stop analysis on branch.  */
+   	  break;
+   	}
+         else
+   	{
+   	  if (aarch64_debug)
+   	    {
+   	      debug_printf ("aarch64: prologue analysis gave up addr=0x%s"
+   			    " opcode=0x%x\n",
+   			    core_addr_to_string_nz (start), insn);
+   	    }
+   	  break;
+   	}
+       }
+   
+     if (cache == NULL)
+       {
+         do_cleanups (back_to);
+         return start;
+       }
+   
+     if (pv_is_register (regs[AARCH64_FP_REGNUM], AARCH64_SP_REGNUM))
+       {
+         /* Frame pointer is fp.  Frame size is constant.  */
+         cache->framereg = AARCH64_FP_REGNUM;
+         cache->framesize = -regs[AARCH64_FP_REGNUM].k;
+       }
+     else if (pv_is_register (regs[AARCH64_SP_REGNUM], AARCH64_SP_REGNUM))
+       {
+         /* Try the stack pointer.  */
+         cache->framesize = -regs[AARCH64_SP_REGNUM].k;
+         cache->framereg = AARCH64_SP_REGNUM;
+       }
+     else
+       {
+         /* We're just out of luck.  We don't know where the frame is.  */
+         cache->framereg = -1;
+         cache->framesize = 0;
+       }
+   
+     for (i = 0; i < AARCH64_X_REGISTER_COUNT; i++)
+       {
+         CORE_ADDR offset;
+   
+         if (pv_area_find_reg (stack, gdbarch, i, &offset))
+   	cache->saved_regs[i].addr = offset;
+       }
+   
+     do_cleanups (back_to);
+     return start;
+   }
+
+
+
+实质上采用的是 levenbergIter迭代法,遇到这种问题，就要看返回的对象是不是对，是不是因为未定状态，造成stackoverflow，从而引发的 trap的signal. 例如返回的result的值是否合法。
 
 因为 aarch64 中 x29 就是Framepointer. http://infocenter.arm.com/help/topic/com.arm.doc.ihi0055b/IHI0055B_aapcs64.pdf
 
