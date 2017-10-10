@@ -215,8 +215,137 @@ LKFlow
 DirectSemiDense and DirectSparse
 --------------------------------
 
-Buserror wait for debug
+Buserror wait for debug，这个是由 Trace/breakpoint Trap signal引起的，直接gdb时，gdb也直接发挂那。
 
+
+.. code-block:: bash
+
+   Using host libthread_db library "/lib/aarch64-linux-gnu/libthread_db.so.1".
+   *********** loop 0 ************
+   [New Thread 0x7fa7430db0 (LWP 9961)]
+   [New Thread 0x7fa6c30db0 (LWP 9962)]
+   [New Thread 0x7fa6430db0 (LWP 9963)]
+   [New Thread 0x7fa5c30db0 (LWP 9964)]
+   [New Thread 0x7fa5430db0 (LWP 9965)]
+   [New Thread 0x7fa4c30db0 (LWP 9966)]
+   [New Thread 0x7f8fffedb0 (LWP 9967)]
+   [New Thread 0x7f8f7fedb0 (LWP 9968)]
+   add total 12556 measurements.
+   *********** loop 1 ************
+   edges in graph: 12556
+   iteration= 0	 chi2= 72633591.401419	 time= 0.735174	 cumTime= 0.735174	 edges= 12556	 schur= 0	 lambda= 12900954.939934	 levenbergIter= 1
+   iteration= 1	 chi2= 62926900.131419	 time= 0.739193	 cumTime= 1.47437	 edges= 12556	 schur= 0	 lambda= 4300318.313311	 levenbergIter= 1
+   iteration= 2	 chi2= 52845484.671121	 time= 0.736138	 cumTime= 2.2105	 edges= 12556	 schur= 0	 lambda= 1433439.437770	 levenbergIter= 1
+   iteration= 3	 chi2= 45449292.558261	 time= 0.733896	 cumTime= 2.9444	 edges= 12556	 schur= 0	 lambda= 477813.145923	 levenbergIter= 1
+   iteration= 4	 chi2= 38422805.114205	 time= 0.744241	 cumTime= 3.68864	 edges= 12556	 schur= 0	 lambda= 159271.048641	 levenbergIter= 1
+   iteration= 5	 chi2= 31970398.890953	 time= 0.74077	 cumTime= 4.42941	 edges= 12556	 schur= 0	 lambda= 53090.349547	 levenbergIter= 1
+   iteration= 6	 chi2= 24270565.530351	 time= 0.732403	 cumTime= 5.16182	 edges= 12556	 schur= 0	 lambda= 17696.783182	 levenbergIter= 1
+   iteration= 7	 chi2= 12153446.174612	 time= 0.73939	 cumTime= 5.9012	 edges= 12556	 schur= 0	 lambda= 5898.927727	 levenbergIter= 1
+   iteration= 8	 chi2= 5615434.148147	 time= 0.74188	 cumTime= 6.64308	 edges= 12556	 schur= 0	 lambda= 1966.309242	 levenbergIter= 1
+   iteration= 9	 chi2= 4849512.586059	 time= 0.733603	 cumTime= 7.37669	 edges= 12556	 schur= 0	 lambda= 655.436414	 levenbergIter= 1
+   iteration= 10	 chi2= 4785381.917957	 time= 0.733941	 cumTime= 8.11063	 edges= 12556	 schur= 0	 lambda= 218.478805	 levenbergIter= 1
+   iteration= 11	 chi2= 4785319.436062	 time= 0.740044	 cumTime= 8.85067	 edges= 12556	 schur= 0	 lambda= 145.652536	 levenbergIter= 1
+   iteration= 12	 chi2= 4785319.043803	 time= 1.63759	 cumTime= 10.4883	 edges= 12556	 schur= 0	 lambda= 1708231013067781.250000	 levenbergIter= 10
+
+   The program being debugged has been started already.
+   Start it from the beginning? (y or n) y
+   Starting program: /srv/slambook/ch8/directMethod/build/direct_semidense data
+   [Thread debugging using libthread_db enabled]
+   Using host libthread_db library "/lib/aarch64-linux-gnu/libthread_db.so.1".
+   *********** loop 0 ************
+   [New Thread 0x7fa7430db0 (LWP 5767)]
+   [New Thread 0x7fa6c30db0 (LWP 5768)]
+   [New Thread 0x7fa6430db0 (LWP 5769)]
+   [New Thread 0x7fa5c30db0 (LWP 5770)]
+   [New Thread 0x7fa5430db0 (LWP 5771)]
+   [New Thread 0x7fa4c30db0 (LWP 5772)]
+   [New Thread 0x7f8fffedb0 (LWP 5773)]
+   [New Thread 0x7f8f7fedb0 (LWP 5774)]
+   add total 12556 measurements.
+   *********** loop 1 ************
+   edges in graph: 12556
+   
+   Thread 1 "direct_semidens" hit Breakpoint 2, poseEstimationDirect (measurements=std::vector of length 12556, capacity 16384 = {...}, gray=0x7fffffeef8, K=..., Tcw=...)
+       at /srv/slambook/ch8/directMethod/direct_semidense.cpp:294
+   294	    optimizer.optimize ( 30 );
+   (gdb) b g2o::SparseOptimizer::optimize
+   /build/gdb-qLNsm9/gdb-7.11.1/gdb/aarch64-tdep.c:334: internal-error: aarch64_analyze_prologue: Assertion `inst.operands[0].type == AARCH64_OPND_Rt' failed.
+   A problem internal to GDB has been detected,
+   further debugging may prove unreliable.
+   Quit this debugging session? (y or n) 
+   Please answer y or n.
+   /build/gdb-qLNsm9/gdb-7.11.1/gdb/
+
+   
+
+进一步调试发现gdb也有问题，这时候基本挂在 return result上。 
+   
+.. code-block:: c
+   
+   operator Isometry3D() const                                                                                                                                                             ¦
+      ¦288           {                                                                                                                                                                                       ¦
+      ¦289             Isometry3D result = (Isometry3D) rotation();                                                                                                                                          ¦
+      ¦290             result.translation() = translation();                                                                                                                                                 ¦
+     >¦291             return result;                                           k::now();                                                                                                                    ¦
+      ¦292           } 
+   0x537838 <g2o::SE3Quat::operator Eigen::Transform<double, 3, 1, 0>() const+92>  str    x0, [sp]
+   x0             0x7fffffdf18     549755805464
+   x29            0x7fffffdf40     549755805504
+   sp             0x7fffffdef0     0x7fffffdef0
+     
+
+
+同时进一步发现g2o 的优化时 **lamda** 异常提前退出
+
+.. code-block:: bash
+
+   [New Thread 0x7f8fffedb0 (LWP 5718)]
+   [New Thread 0x7f8f7fedb0 (LWP 5719)]
+   add total 12556 measurements.
+   *********** loop 1 ************
+   edges in graph: 12556
+   
+   Thread 1 "direct_semidens" hit Breakpoint 2, poseEstimationDirect (measurements=std::vector of length 12556, capacity 16384 = {...}, gray=0x7fffffeef8, K=..., Tcw=...)
+       at /srv/slambook/ch8/directMethod/direct_semidense.cpp:294
+   294	    optimizer.optimize ( 30 );
+   (gdb) s optimizer.optimize(10)
+   Couldn't find method g2o::SparseOptimizer::optimize
+   
+   /usr/local/include/g2o/core/base_unary_edge.h, /usr/local/include/g2o/core/base_edge.h, /usr/include/c++/5/bits/stl_set.h, /usr/include/c++/5/bits/ptr_traits.h, 
+   /usr/local/include/g2o/core/sparse_block_matrix_diagonal.h, /usr/local/include/g2o/core/block_solver.h, /usr/include/c++/5/bits/unordered_map.h, /usr/include/c++/5/bits/hashtable.h, 
+   /usr/include/c++/5/utility, /usr/include/c++/5/bits/functional_hash.h, /usr/include/c++/5/bits/hashtable_policy.h, /usr/local/include/g2o/core/sparse_block_matrix_ccs.h, 
+   /usr/include/c++/5/bits/stl_map.h, /usr/include/c++/5/bits/stl_function.h, /usr/include/c++/5/ext/aligned_buffer.h, /usr/local/include/g2o/core/sparse_block_matrix.h, 
+   /usr/local/include/g2o/core/linear_solver.h, /usr/include/c++/5/chrono, /usr/include/c++/5/bits/stl_iterator_base_types.h, /usr/include/c++/5/bits/stl_iterator.h, /usr/include/c++/5/bits/stl_algo.h, 
+   ---Type <return> to continue, or q <return> to quit---q
+   /usrQuit
+   (gdb) b g2o::SparseOptimizer::optimize
+   /build/gdb-qLNsm9/gdb-7.11.1/gdb/aarch64-tdep.c:334: internal-error: aarch64_analyze_prologue: Assertion `inst.operands[0].type == AARCH64_OPND_Rt' failed.
+   A problem internal to GDB has been detected,
+   further debugging may prove unreliable.
+   Quit this debugging session? (y or n) y
+
+
+实质上采用的是 levenbergIter迭代法,遇到这种问题，就要看返回的对象是不是对，是不是因为未定状态，造成stackoverflow，从而引发的 trap的signal.
+
+因为 aarch64 中 x29 就是Framepointer. http://infocenter.arm.com/help/topic/com.arm.doc.ihi0055b/IHI0055B_aapcs64.pdf
+
+.. code-block:: asm
+
+   0x537838 <g2o::SE3Quat::operator Eigen::Transform<double, 3, 1, 0>() const+92>  str    x0, [sp]
+   0x537838 <g2o::SE3Quat::operator Eigen::Transform<double, 3, 1, 0>() const+92>  mov    sp, x29
+   x0             0x7fffffdf18     549755805464
+
+
+.. code-block:: c
+
+   void OptimizationAlgorithmLevenberg::printVerbose(std::ostream& os) const
+    {
+      os
+        << "\t schur= " << _solver->schur()
+        << "\t lambda= " << FIXED(_currentLambda)
+        << "\t levenbergIter= " << _levenbergIterations;
+    }
+   
 ch9
 ===
 
@@ -252,7 +381,8 @@ cere bundle
 ch11
 =====
 
-build error: gtsam module
+build error: gtsam module 为什么版本之间ARM不兼容。 https://github.com/introlab/rtabmap/issues/131，
+即使都采用了相同的编译器与C++11 还是有这样的问题，很有可能是一些宏导致构成cast 链出现问题。
 
 pose_graph_g2o_lie
 ------------------
