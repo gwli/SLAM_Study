@@ -47,7 +47,7 @@ JetPack 的目录结构
 
     .. code-block:: bash
       
-       sudo tar -cvpz --one-file-system / |ssh <yourlocalhost> "(cat >ssh_jetson_tx2_rootfs.tgz)"
+       sudo tar -cvpz --one-file-system / | ssh <yourlocalhost> "(cat >ssh_jetson_tx2_rootfs.tgz)"
 
 #. 在host上解压到jetpack的解压目录
  
@@ -73,9 +73,20 @@ JetPack 的目录结构
 
 
 
+如何手工安装
+============
 
 
-
+#. cuda toolkit cross compiler
+   
+   .. code-block:: bash
+      
+      sudo dpkg --add-architecture arm64
+      sudo dpkg -i xxx.deb
+      sudo apt-get update
+      sudo apt install cuda-cross-aarch64
+       
+#. Import a CUDA sample to Nsight Eclipse and set arch as aarch64
 
 
 
