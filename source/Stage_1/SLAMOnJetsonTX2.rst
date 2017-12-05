@@ -32,7 +32,33 @@ TX2 的基本库
 ==============
 
 
-Tegra_multimedia sample
-=======================
+Tegra_multimedia api sample
+===========================
 
-#. backend
+Manual : <L4T Multimedia API Reference> on https://developer.nvidia.com/embedded/downloads
+
+库的组成
+========
+
+#. V4L2 API 用于各种视频的编解码与scaling等等。
+#. libargus 用于图像处理,能直接处理lower level Camera信息。 具体流程可以查看http://on-demand.gputechconf.com/gtc/2016/webinar/getting-started-jetpack-camera-api.pdf
+#. Buffer utilis ,buffer 的内存管理
+#. NVDC-DRM 可以对于非 X11的轻量的级的显示管理系统，特别是适合一些嵌入的系统 
+#. NVOSD on-Screen display.
+
+
+backend
+-------
+
+`H.264 <https://zh.wikipedia.org/wiki/H.264/MPEG-4_AVC>`_  
+
+.. figure:: /Stage_1/image/backend.png
+
+   from API reference manual
+
+.. code-block:: bash
+
+   $ ./backend 1 ../../data/Video/sample_outdoor_car_1080p_10fps.h264 H264 \
+      --trt-deployfile ../../data/Model/GoogleNet_one_class/GoogleNet_modified_oneClass_halfHD.prototxt \
+      --trt-modelfile ../../data/Model/GoogleNet_one_class/GoogleNet_modified_oneClass_halfHD.caffemodel \
+      --trt-forcefp32 0 --trt-proc-interval 1 -fps 10
