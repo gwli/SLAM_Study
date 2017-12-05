@@ -1,3 +1,4 @@
+**********
 Jetson-TX2
 **********
 
@@ -76,6 +77,24 @@ JetPack 的目录结构
 如何手工安装
 ============
 
+#. Install CUDA
+
+   .. code-block:: bash
+
+      sudo dpkg -i cuda-repo-ubuntu1604-8-0-local-r381_8.0.84-1_amd64.deb
+      sudo apt-get 
+      sudo apt-get install -y --allow-unauthenticated update
+      sudo apt-get install -y cuda 
+      sudo dpkg --add-architecture arm64
+      sudo apt-get --allow-unauthenticated update
+      sudo apt-get install -y --allow-unauthenticated cuda-cross-aarch64
+
+#. libopencv4tegra-dev
+
+   .. code-block:: bash
+
+      sudo apt-get install -y cuda-cross-aarch64
+
 
 #. cuda toolkit cross compiler
    
@@ -87,10 +106,6 @@ JetPack 的目录结构
       sudo apt install cuda-cross-aarch64
        
 #. Import a CUDA sample to Nsight Eclipse and set arch as aarch64
-
-
-
-
 
 
 

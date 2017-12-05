@@ -17,7 +17,6 @@ Contents:
    Stage_3.rst
    Framework.rst
    sensor.rst
-   SLAMOnJetsonTX2.rst
 
 
 Indices and tables
