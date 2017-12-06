@@ -49,6 +49,7 @@ backend
 -------
 
 `H.264 <https://zh.wikipedia.org/wiki/H.264/MPEG-4_AVC>`_  
+3.1 支持了 GOOGLE 的VP9编码格式。
 
 .. figure:: /Stage_1/image/backend.png
 
