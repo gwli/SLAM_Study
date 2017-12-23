@@ -71,13 +71,32 @@ backend
 看NVTX的标注会比较准，而下面函数统计，则依赖于工具的准确性。
 
 
+
 #. Dec_feed_loop thread 主要是V4L2 decode.
+      里面更小的pipline.
 #. Cov0_capture :V4L2 block to pitch linear coversion
 #. TensorRT Thread, 同步，copying data,物体的识别
+   识别之后把 rect_list,处理给 frame_bbox.把这些放进 osd_queue里。
 #. Render Thread, 大部分时间等待数据来渲染
+
+
 
 TimeLine 分析
 -------------
+
+trace 分析
+-----------
+
+主线程 step3的工作
+
+#. buildnetwork, init tensorrt thread.
+#. init egl and init rendering thread
+#. init decoder thread
+#. init convert thread
+
+
+proformance
+-----------
 
 #. 解码，识别，渲染的并行性不错
 #. 大量的等待线程，可以建立一个  job system 来优化。
@@ -88,3 +107,18 @@ GPU
 #. 填充timeline中大量的空隙，实现更高的利用率
 #. 更有效的内存复用与传输机制 
 #. 合并与优化 cuda kernel.
+
+
+
+把GPU内放在Image的时候，两种方法
+
+#. cudamalloc 自己手工来做
+#. 借助GLImage来做 因为ogl有现成接口，而NV CUDA 与ogl之间也现成的。
+   
+   .. code-block:: c
+      
+      eglImage = eglImageFromFD
+      CuGraphicsRegisterImage(CUgraphicsResources,EGLImageKHR)
+      CuGraphicsUnregisterImage(CUgraphicsResources,EGLImageKHR)
+
+
