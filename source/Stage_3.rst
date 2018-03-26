@@ -4,6 +4,7 @@ SLAM 算法分析
 
 
 .. include:: /Stage_3/SLAM_book.rst
+.. include:: /Stage_3/DL_SLAM.rst
 
 #. 各个算法分析与对比
 
